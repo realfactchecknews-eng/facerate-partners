@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FaceRate — кабинет партнёра</title>
+<style>
+  :root{--gold:#c4a46b;--gold-hi:#e8cf96;--bg:#050505;--card:#12100c;--txt:#e8e2d6;--dim:#8a7f6a;}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--txt);
+    font-family:'Cormorant Garamond',Georgia,serif;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{background:var(--card);border:1px solid #2a251c;border-radius:14px;padding:32px;max-width:360px;width:100%}
+  h1{color:var(--gold-hi);font-size:26px;text-align:center;margin:0 0 6px}
+  p.sub{color:var(--dim);text-align:center;margin:0 0 22px;font-size:15px}
+  label{display:block;font-size:14px;color:var(--dim);margin-bottom:6px}
+  input{width:100%;padding:11px 12px;margin-bottom:14px;border-radius:8px;border:1px solid #2a251c;
+    background:#1a1710;color:var(--txt);font-size:16px;font-family:inherit}
+  button{width:100%;padding:12px;border-radius:8px;border:none;background:var(--gold);color:#1a1710;
+    font-weight:600;font-size:16px;cursor:pointer;font-family:inherit}
+  button:active{opacity:.85}
+  #err{color:#e07a7a;text-align:center;font-size:14px;margin-top:10px;min-height:18px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>facerate</h1>
+    <p class="sub">Кабинет медиапартнёра</p>
+    <label for="code">Код партнёра</label>
+    <input id="code" autocapitalize="characters" placeholder="Например: BLOGGER1">
+    <label for="pin">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" placeholder="6 цифр">
+    <button id="go">Войти</button>
+    <div id="err"></div>
+  </div>
+<script>
+  const WORKER = 'https://face-metrics-ai.realfactchecknews.workers.dev';
+  document.getElementById('go').onclick = async () => {
+    const code = document.getElementById('code').value.trim().toUpperCase();
+    const pin = document.getElementById('pin').value.trim();
+    const err = document.getElementById('err');
+    err.textContent = '';
+    if (!code || !pin) { err.textContent = 'Заполни код и PIN'; return; }
+    try {
+      const r = await fetch(WORKER + '/partner-data', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, pin }),
+      });
+      const data = await r.json();
+      if (data.error) { err.textContent = 'Неверный код или PIN'; return; }
+      sessionStorage.setItem('fr_partner_code', code);
+      sessionStorage.setItem('fr_partner_pin', pin);
+      location.href = 'dashboard.html';
+    } catch { err.textContent = 'Ошибка сети, попробуй ещё раз'; }
+  };
+</script>
+</body>
+</html>

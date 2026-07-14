@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FaceRate — статистика партнёра</title>
+<style>
+  :root{--gold:#c4a46b;--gold-hi:#e8cf96;--bg:#050505;--card:#12100c;--txt:#e8e2d6;--dim:#8a7f6a;}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--txt);
+    font-family:'Cormorant Garamond',Georgia,serif;padding:24px}
+  .wrap{max-width:520px;margin:0 auto}
+  h1{color:var(--gold-hi);font-size:26px;margin:0 0 4px}
+  .code{color:var(--dim);font-size:14px;margin-bottom:22px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+  .stat{background:var(--card);border:1px solid #2a251c;border-radius:12px;padding:16px}
+  .stat b{display:block;font-size:26px;color:var(--gold-hi)}
+  .stat span{color:var(--dim);font-size:13px}
+  h2{color:var(--gold);font-size:17px;border-bottom:1px solid #2a251c;padding-bottom:8px;margin-top:28px}
+  .task{background:var(--card);border:1px solid #2a251c;border-radius:10px;padding:12px 14px;margin-bottom:8px;
+    display:flex;align-items:flex-start;gap:10px}
+  .task.done{opacity:.45;text-decoration:line-through}
+  .task .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:7px;flex:none}
+  .empty{color:var(--dim);font-size:14px;padding:8px 0}
+  a.back{color:var(--dim);font-size:13px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html">← выйти</a>
+    <h1 id="label">facerate — кабинет партнёра</h1>
+    <div class="code" id="codeline">Код: —</div>
+    <div class="stats">
+      <div class="stat"><b id="purchases">0</b><span>покупок по коду</span></div>
+      <div class="stat"><b id="revenue">0₽</b><span>оборот</span></div>
+      <div class="stat"><b id="pct">0%</b><span>твоя ставка</span></div>
+      <div class="stat"><b id="earned">0₽</b><span>заработано</span></div>
+    </div>
+    <h2>Задания</h2>
+    <div id="tasks"></div>
+  </div>
+<script>
+  const WORKER = 'https://face-metrics-ai.realfactchecknews.workers.dev';
+  const code = sessionStorage.getItem('fr_partner_code');
+  const pin = sessionStorage.getItem('fr_partner_pin');
+  if (!code || !pin) location.href = 'index.html';
+
+  fetch(WORKER + '/partner-data', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, pin }),
+  }).then(r => r.json()).then(d => {
+    if (d.error) { location.href = 'index.html'; return; }
+    document.getElementById('label').textContent = d.label ? `facerate — ${d.label}` : 'facerate — кабинет партнёра';
+    document.getElementById('codeline').textContent = 'Код: ' + d.code;
+    document.getElementById('purchases').textContent = d.purchases;
+    document.getElementById('revenue').textContent = Math.round(d.revenueRub) + '₽';
+    document.getElementById('pct').textContent = d.mediaPct + '%';
+    document.getElementById('earned').textContent = d.earned + '₽';
+    const tasksEl = document.getElementById('tasks');
+    if (!d.tasks || !d.tasks.length) {
+      tasksEl.innerHTML = '<div class="empty">Заданий пока нет</div>';
+    } else {
+      tasksEl.innerHTML = d.tasks.map(t =>
+        `<div class="task${t.done ? ' done' : ''}"><div class="dot"></div><div>${t.text}</div></div>`
+      ).join('');
+    }
+  }).catch(() => { location.href = 'index.html'; });
+</script>
+</body>
+</html>

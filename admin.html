@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FaceRate — партнёры (админ)</title>
+<style>
+  :root{--gold:#c4a46b;--gold-hi:#e8cf96;--bg:#050505;--card:#12100c;--txt:#e8e2d6;--dim:#8a7f6a;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Arial,sans-serif;padding:20px}
+  h1{color:var(--gold-hi);font-size:20px}
+  .card{background:var(--card);border:1px solid #2a251c;border-radius:10px;padding:16px;margin-bottom:14px}
+  input,button{font-size:14px;padding:8px 10px;border-radius:8px;border:1px solid #2a251c;background:#1a1710;color:var(--txt)}
+  button{background:var(--gold);color:#1a1710;border:none;cursor:pointer;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #221f18}
+  #gate{max-width:340px;margin:100px auto;text-align:center}
+  #gate input{width:100%;margin-bottom:10px}
+  .hidden{display:none}
+  .row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .row input{flex:1;min-width:100px}
+</style>
+</head>
+<body>
+  <div id="gate">
+    <h1>facerate — партнёры</h1>
+    <input id="token" type="password" placeholder="ADMIN_STATS_TOKEN">
+    <button onclick="enter()">Войти</button>
+  </div>
+  <div id="app" class="hidden">
+    <h1>Медиапартнёры</h1>
+    <div class="card">
+      <div class="row">
+        <input id="npCode" placeholder="Код (напр. BLOGGER1)">
+        <button onclick="setPin()">Выдать/сменить PIN</button>
+      </div>
+      <div class="row">
+        <input id="ntCode" placeholder="Код">
+        <input id="ntText" placeholder="Текст задания">
+        <button onclick="addTask()">Добавить задание</button>
+      </div>
+      <div id="msg"></div>
+    </div>
+    <div class="card">
+      <button onclick="loadList()">Обновить список</button>
+      <table id="tbl"><thead><tr><th>Код</th><th>Партнёр</th><th>PIN выдан</th><th>Покупок</th><th>Оборот</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+<script>
+  const WORKER = 'https://face-metrics-ai.realfactchecknews.workers.dev';
+  let TOKEN = '';
+  function enter() {
+    TOKEN = document.getElementById('token').value.trim();
+    if (!TOKEN) return;
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    loadList();
+  }
+  async function call(body) {
+    const r = await fetch(WORKER + '/partner-admin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: TOKEN, ...body }),
+    });
+    return r.json();
+  }
+  async function setPin() {
+    const code = document.getElementById('npCode').value.trim().toUpperCase();
+    if (!code) return;
+    const d = await call({ action: 'setPin', code });
+    document.getElementById('msg').textContent = d.error ? 'Ошибка: ' + d.error : `PIN для ${d.code}: ${d.pin}`;
+    loadList();
+  }
+  async function addTask() {
+    const code = document.getElementById('ntCode').value.trim().toUpperCase();
+    const text = document.getElementById('ntText').value.trim();
+    if (!code || !text) return;
+    const d = await call({ action: 'addTask', code, text });
+    document.getElementById('msg').textContent = d.error ? 'Ошибка: ' + d.error : 'Задание добавлено';
+    document.getElementById('ntText').value = '';
+  }
+  async function loadList() {
+    const d = await call({ action: 'list' });
+    if (d.error) { document.getElementById('msg').textContent = 'Ошибка: ' + d.error; return; }
+    const tb = document.querySelector('#tbl tbody');
+    tb.innerHTML = (d.partners || []).map(p =>
+      `<tr><td>${p.code}</td><td>${p.label || ''}</td><td>${p.hasPin ? '✅' : '—'}</td><td>${p.purchases}</td><td>${Math.round(p.revenueRub)}₽</td></tr>`
+    ).join('');
+  }
+</script>
+</body>
+</html>
