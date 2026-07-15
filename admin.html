@@ -5,51 +5,141 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>FaceRate — партнёры (админ)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--gold:#c4a46b;--gold-hi:#e8cf96;--bg:#050505;--card:#12100c;--txt:#e8e2d6;--dim:#8a7f6a;}
+  :root{
+    --gold:#c4a46b;--gold-hi:#e8cf96;--bg:#050505;--bg2:#0a0906;--card:#12100c;--card-hi:#171310;
+    --txt:#e8e2d6;--dim:#8a7f6a;--line:#2a251c;--good:#8fce8f;--bad:#e07a7a;
+  }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Arial,sans-serif;padding:20px}
-  h1{color:var(--gold-hi);font-size:20px}
-  .card{background:var(--card);border:1px solid #2a251c;border-radius:10px;padding:16px;margin-bottom:14px}
-  input,button{font-size:14px;padding:8px 10px;border-radius:8px;border:1px solid #2a251c;background:#1a1710;color:var(--txt)}
-  button{background:var(--gold);color:#1a1710;border:none;cursor:pointer;font-weight:600}
-  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #221f18}
-  #gate{max-width:340px;margin:100px auto;text-align:center}
-  #gate input{width:100%;margin-bottom:10px}
-  .hidden{display:none}
-  .row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-  .row input{flex:1;min-width:100px}
+  body{margin:0;min-height:100vh;background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(196,164,107,.08), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(196,164,107,.05), transparent 60%),
+      var(--bg);
+    color:var(--txt);font-family:'Cormorant Garamond',Georgia,serif;padding:28px;
+  }
+  h1{color:var(--gold-hi);font-weight:600;letter-spacing:.5px;font-size:26px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:14px;margin:0 0 26px}
+  input,button,select{font-family:inherit;font-size:15px}
+  input{padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:#1a1710;color:var(--txt);
+    transition:border-color .2s, box-shadow .2s}
+  input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,164,107,.15)}
+  button{padding:10px 16px;border-radius:9px;border:none;background:var(--gold);color:#1a1710;
+    font-weight:600;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, background .2s}
+  button:hover{background:var(--gold-hi);box-shadow:0 4px 16px rgba(196,164,107,.25)}
+  button:active{transform:scale(.96)}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--dim)}
+  button.ghost:hover{color:var(--gold-hi);border-color:var(--gold)}
+  button.small{padding:6px 11px;font-size:13px}
+  .card{background:linear-gradient(180deg,var(--card-hi),var(--card));border:1px solid var(--line);
+    border-radius:14px;padding:20px;margin-bottom:16px;animation:rise .4s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  #gate{max-width:360px;margin:110px auto;text-align:center}
+  #gate .card{animation:rise .5s ease both}
+  #gate input{width:100%;margin-bottom:12px}
+  #gate button{width:100%}
+  .hidden{display:none!important}
+  .row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .row input{flex:1;min-width:120px}
+
+  /* tabs */
+  .tabbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+  .tab{padding:9px 16px;border-radius:10px 10px 0 0;color:var(--dim);cursor:pointer;white-space:nowrap;
+    font-weight:600;position:relative;transition:color .2s;flex:none}
+  .tab:hover{color:var(--txt)}
+  .tab.active{color:var(--gold-hi)}
+  .tab.active::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--gold);
+    border-radius:2px;animation:grow .25s ease both}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  .panel{display:none;animation:fade .3s ease both}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    transition:transform .15s, border-color .15s}
+  .stat:hover{transform:translateY(-2px);border-color:var(--gold)}
+  .stat b{display:block;font-size:24px;color:var(--gold-hi);font-weight:600}
+  .stat span{color:var(--dim);font-size:12px}
+
+  h2{color:var(--gold);font-size:16px;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:8px;margin:26px 0 12px}
+  .task{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;
+    display:flex;align-items:center;gap:10px;transition:opacity .2s, background .2s}
+  .task:hover{background:#181410}
+  .task.done{opacity:.4}
+  .task.done .txt{text-decoration:line-through}
+  .task .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex:none;cursor:pointer;
+    transition:transform .15s}
+  .task .dot:hover{transform:scale(1.3)}
+  .task.done .dot{background:var(--good)}
+  .task .txt{flex:1}
+  .task .del{color:var(--dim);cursor:pointer;font-size:13px;transition:color .15s}
+  .task .del:hover{color:var(--bad)}
+  .empty{color:var(--dim);font-size:14px;padding:10px 0}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  tr.prow{cursor:pointer;transition:background .15s}
+  tr.prow:hover td{background:#181410}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+  .pill.on{background:rgba(143,206,143,.15);color:var(--good)}
+  .pill.off{background:rgba(224,122,122,.12);color:var(--bad)}
+
+  #msg{min-height:20px;font-size:14px;color:var(--gold-hi);transition:opacity .3s}
+  #msg.show{animation:pop .25s ease}
+  @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--line);
+    border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading{color:var(--dim);font-size:14px;padding:20px 0;text-align:center}
 </style>
 </head>
 <body>
   <div id="gate">
-    <h1>facerate — партнёры</h1>
-    <input id="token" type="password" placeholder="ADMIN_STATS_TOKEN">
-    <button onclick="enter()">Войти</button>
+    <div class="card">
+      <h1>facerate</h1>
+      <p class="sub">Кабинет управления медиапартнёрами</p>
+      <input id="token" type="password" placeholder="ADMIN_STATS_TOKEN" onkeydown="if(event.key==='Enter')enter()">
+      <button onclick="enter()">Войти</button>
+    </div>
   </div>
+
   <div id="app" class="hidden">
     <h1>Медиапартнёры</h1>
+    <p class="sub">Статистика, PIN-доступы и задания для каждого партнёра</p>
+
     <div class="card">
       <div class="row">
-        <input id="npCode" placeholder="Код (напр. BLOGGER1)">
-        <button onclick="setPin()">Выдать/сменить PIN</button>
-      </div>
-      <div class="row">
-        <input id="ntCode" placeholder="Код">
-        <input id="ntText" placeholder="Текст задания">
-        <button onclick="addTask()">Добавить задание</button>
+        <input id="npCode" placeholder="Код партнёра (напр. BLOGGER1)">
+        <button onclick="setPin()">🔑 Выдать / сменить PIN</button>
       </div>
       <div id="msg"></div>
     </div>
-    <div class="card">
-      <button onclick="loadList()">Обновить список</button>
-      <table id="tbl"><thead><tr><th>Код</th><th>Партнёр</th><th>PIN выдан</th><th>Покупок</th><th>Оборот</th></tr></thead><tbody></tbody></table>
+
+    <div class="tabbar" id="tabbar">
+      <div class="tab active" data-tab="all" onclick="selectTab('all')">Все партнёры</div>
     </div>
+
+    <div id="panel-all" class="panel active">
+      <div class="card">
+        <table id="tbl"><thead><tr><th>Код</th><th>Партнёр</th><th>PIN</th><th>Покупок</th><th>Оборот</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <div id="tabpanels"></div>
   </div>
+
 <script>
   const WORKER = 'https://face-metrics-ai.realfactchecknews.workers.dev';
   let TOKEN = '';
+  let PARTNERS = [];
+  let OPEN_TABS = [];
+
   function enter() {
     TOKEN = document.getElementById('token').value.trim();
     if (!TOKEN) return;
@@ -57,6 +147,14 @@
     document.getElementById('app').classList.remove('hidden');
     loadList();
   }
+
+  function flash(text, isErr) {
+    const el = document.getElementById('msg');
+    el.textContent = text;
+    el.style.color = isErr ? 'var(--bad)' : 'var(--gold-hi)';
+    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  }
+
   async function call(body) {
     const r = await fetch(WORKER + '/partner-admin', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -64,28 +162,135 @@
     });
     return r.json();
   }
+
   async function setPin() {
     const code = document.getElementById('npCode').value.trim().toUpperCase();
     if (!code) return;
     const d = await call({ action: 'setPin', code });
-    document.getElementById('msg').textContent = d.error ? 'Ошибка: ' + d.error : `PIN для ${d.code}: ${d.pin}`;
+    if (d.error) { flash('Ошибка: ' + d.error, true); return; }
+    flash(`PIN для ${d.code}: ${d.pin}`);
+    document.getElementById('npCode').value = '';
     loadList();
+    if (OPEN_TABS.includes(code)) openPartner(code);
   }
-  async function addTask() {
-    const code = document.getElementById('ntCode').value.trim().toUpperCase();
-    const text = document.getElementById('ntText').value.trim();
-    if (!code || !text) return;
-    const d = await call({ action: 'addTask', code, text });
-    document.getElementById('msg').textContent = d.error ? 'Ошибка: ' + d.error : 'Задание добавлено';
-    document.getElementById('ntText').value = '';
-  }
+
   async function loadList() {
-    const d = await call({ action: 'list' });
-    if (d.error) { document.getElementById('msg').textContent = 'Ошибка: ' + d.error; return; }
     const tb = document.querySelector('#tbl tbody');
-    tb.innerHTML = (d.partners || []).map(p =>
-      `<tr><td>${p.code}</td><td>${p.label || ''}</td><td>${p.hasPin ? '✅' : '—'}</td><td>${p.purchases}</td><td>${Math.round(p.revenueRub)}₽</td></tr>`
-    ).join('');
+    tb.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Загружаю...</td></tr>';
+    const d = await call({ action: 'list' });
+    if (d.error) { flash('Ошибка: ' + d.error, true); return; }
+    PARTNERS = d.partners || [];
+    tb.innerHTML = PARTNERS.length ? PARTNERS.map(p =>
+      `<tr class="prow" onclick="openPartner('${p.code}')">
+        <td>${p.code}</td><td>${p.label || '—'}</td>
+        <td><span class="pill ${p.hasPin ? 'on' : 'off'}">${p.hasPin ? 'выдан' : 'нет'}</span></td>
+        <td>${p.purchases}</td><td>${Math.round(p.revenueRub)}₽</td>
+      </tr>`
+    ).join('') : '<tr><td colspan="5" class="empty">Медиапромокодов пока нет</td></tr>';
+  }
+
+  function selectTab(code) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === code));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + code));
+  }
+
+  function ensureTab(code) {
+    if (OPEN_TABS.includes(code)) return;
+    OPEN_TABS.push(code);
+    const tab = document.createElement('div');
+    tab.className = 'tab'; tab.dataset.tab = code; tab.textContent = code;
+    tab.onclick = () => selectTab(code);
+    const close = document.createElement('span');
+    close.textContent = ' ×'; close.style.color = 'var(--dim)'; close.style.marginLeft = '4px';
+    close.onclick = (e) => { e.stopPropagation(); closeTab(code); };
+    tab.appendChild(close);
+    document.getElementById('tabbar').appendChild(tab);
+
+    const panel = document.createElement('div');
+    panel.className = 'panel'; panel.id = 'panel-' + code;
+    panel.innerHTML = '<div class="loading"><span class="spinner"></span>Загружаю...</div>';
+    document.getElementById('tabpanels').appendChild(panel);
+  }
+
+  function closeTab(code) {
+    OPEN_TABS = OPEN_TABS.filter(c => c !== code);
+    document.querySelector(`.tab[data-tab="${code}"]`)?.remove();
+    document.getElementById('panel-' + code)?.remove();
+    selectTab('all');
+  }
+
+  async function openPartner(code) {
+    ensureTab(code);
+    selectTab(code);
+    const d = await call({ action: 'get', code });
+    const panel = document.getElementById('panel-' + code);
+    if (d.error) { panel.innerHTML = `<div class="empty">Ошибка: ${d.error}</div>`; return; }
+    renderPartner(panel, d);
+  }
+
+  function renderPartner(panel, d) {
+    panel.innerHTML = `
+      <div class="stats">
+        <div class="stat"><b>${d.purchases}</b><span>покупок</span></div>
+        <div class="stat"><b>${Math.round(d.revenueRub)}₽</b><span>оборот</span></div>
+        <div class="stat"><b>${d.mediaPct}%</b><span>ставка</span></div>
+        <div class="stat"><b>${d.earned}₽</b><span>заработано</span></div>
+      </div>
+      <div class="card">
+        <div class="row" style="align-items:center;margin-bottom:0">
+          <span style="color:var(--dim)">PIN:</span>
+          <b style="color:var(--gold-hi);font-size:18px">${d.pin || '— не выдан'}</b>
+          <button class="small ghost" onclick="regenPin('${d.code}')">Сменить</button>
+        </div>
+      </div>
+      <h2>Задания</h2>
+      <div class="row">
+        <input id="task-${d.code}" placeholder="Новое задание...">
+        <button onclick="addTaskFor('${d.code}')">Добавить</button>
+      </div>
+      <div id="tasks-${d.code}"></div>
+    `;
+    renderTasks(d.code, d.tasks || []);
+  }
+
+  function renderTasks(code, tasks) {
+    const el = document.getElementById('tasks-' + code);
+    if (!el) return;
+    el.innerHTML = tasks.length ? tasks.map((t, i) =>
+      `<div class="task ${t.done ? 'done' : ''}">
+        <div class="dot" onclick="toggleTask('${code}',${i})"></div>
+        <div class="txt">${t.text}</div>
+        <div class="del" onclick="deleteTask('${code}',${i})">удалить</div>
+      </div>`
+    ).join('') : '<div class="empty">Заданий пока нет</div>';
+  }
+
+  async function addTaskFor(code) {
+    const input = document.getElementById('task-' + code);
+    const text = input.value.trim();
+    if (!text) return;
+    const d = await call({ action: 'addTask', code, text });
+    if (d.error) { flash('Ошибка: ' + d.error, true); return; }
+    input.value = '';
+    renderTasks(code, d.tasks);
+  }
+
+  async function toggleTask(code, idx) {
+    const d = await call({ action: 'toggleTask', code, idx });
+    if (!d.error) renderTasks(code, d.tasks);
+  }
+
+  async function deleteTask(code, idx) {
+    const d = await call({ action: 'deleteTask', code, idx });
+    if (!d.error) renderTasks(code, d.tasks);
+  }
+
+  async function regenPin(code) {
+    const d = await call({ action: 'setPin', code });
+    if (d.error) { flash('Ошибка: ' + d.error, true); return; }
+    flash(`Новый PIN для ${code}: ${d.pin}`);
+    openPartner(code);
+    loadList();
   }
 </script>
 </body>
